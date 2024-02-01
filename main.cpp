@@ -1,47 +1,122 @@
 #include <iostream>
-#include <string>
-using namespace std;
+#include <iomanip>
+#include "patient.h"
+#include "treatment.h"
 
 int main() {
-    const int NUM_SALSA_TYPES = 5;
-    string salsaNames[] = {"mild", "medium", "sweet", "hot", "zesty"};
-    int jarsSold[NUM_SALSA_TYPES] = {0};
-    int totalSales = 0;
+    PatientAccount patient;
+    Surgery surgery;
+    Pharmacy pharmacy;
 
-    for (int i = 0; i < NUM_SALSA_TYPES; i++) {
-        cout << "Enter jars sold for " << salsaNames[i] << ": ";
-        cin >> jarsSold[i];
-        totalSales += jarsSold[i];
-    }
+    int hospitalDays;
+    char hadSurgery, hadMedicine, hadOtherMedicine;
+    string surgeryType, medicationType;
 
-    int maxSales = jarsSold[0];
-    int minSales = jarsSold[0];
-    string highSeller = salsaNames[0];
-    string lowSeller = salsaNames[0];
+    cout << "*** Patient Release Statement ***\n\n";
+    cout << "How many days was the patient in the hospital? ";
+    cin >> hospitalDays;
 
-    for (int i = 1; i < NUM_SALSA_TYPES; i++) {
-        if (jarsSold[i] > maxSales) {
-            maxSales = jarsSold[i];
-            highSeller = salsaNames[i];
+    patient.setDays(hospitalDays);
+
+    cout << "Did the patient have surgery (Y/N)? ";
+    cin >> hadSurgery;
+
+    if (toupper(hadSurgery) == 'Y') {
+        displaySurgeryOptions();
+        cout << "Enter the number corresponding to the surgery type: ";
+        int surgeryChoice;
+        cin >> surgeryChoice;
+
+        switch (surgeryChoice) {
+            case 1:
+                surgery.updateSurgeryCharge(600.0);
+                break;
+            case 2:
+                surgery.updateSurgeryCharge(1250.0);
+                break;
+            case 3:
+                surgery.updateSurgeryCharge(6000.0);
+                break;
+            case 4:
+                surgery.updateSurgeryCharge(12000.0);
+                break;
+            case 5:
+                surgery.updateSurgeryCharge(28000.0);
+                break;
+            default:
+                cout << "Invalid surgery choice." << endl;
         }
-        if (jarsSold[i] < minSales) {
-            minSales = jarsSold[i];
-            lowSeller = salsaNames[i];
+
+        patient.updateTotalCharges(surgery.getSurgeryCharge());
+    }
+
+    cout << "Did the patient receive medication (Y/N)? ";
+    cin >> hadMedicine;
+
+    if (toupper(hadMedicine) == 'Y') {
+        displayMedicationOptions();
+        cout << "Enter the number corresponding to the medication type: ";
+        int medicationChoice;
+        cin >> medicationChoice;
+
+        switch (medicationChoice) {
+            case 1:
+                pharmacy.updatePharmacyTotal(10.0);
+                break;
+            case 2:
+                pharmacy.updatePharmacyTotal(20.0);
+                break;
+            case 3:
+                pharmacy.updatePharmacyTotal(50.0);
+                break;
+            case 4:
+                pharmacy.updatePharmacyTotal(75.0);
+                break;
+            case 5:
+                pharmacy.updatePharmacyTotal(300.0);
+                break;
+            default:
+                cout << "Invalid medication choice." << endl;
+        }
+
+        patient.updateTotalCharges(pharmacy.getPharmacyTotal());
+
+        cout << "Did the patient receive other medication (Y/N)? ";
+        cin >> hadOtherMedicine;
+
+        while (toupper(hadOtherMedicine) == 'Y') {
+            displayMedicationOptions();
+            cout << "Enter the number corresponding to the other medication type: ";
+            cin >> medicationChoice;
+
+            switch (medicationChoice) {
+                case 1:
+                    pharmacy.updatePharmacyTotal(10.0);
+                    break;
+                case 2:
+                    pharmacy.updatePharmacyTotal(20.0);
+                    break;
+                case 3:
+                    pharmacy.updatePharmacyTotal(50.0);
+                    break;
+                case 4:
+                    pharmacy.updatePharmacyTotal(75.0);
+                    break;
+                case 5:
+                    pharmacy.updatePharmacyTotal(300.0);
+                    break;
+                default:
+                    cout << "Invalid medication choice." << endl;
+            }
+
+            patient.updateTotalCharges(pharmacy.getPharmacyTotal());
+
+            cout << "Did the patient receive other medication (Y/N)? ";
+            cin >> hadOtherMedicine;
         }
     }
 
-    cout << "Salsa Sales Report" << endl;
-    cout << "Names      Jars Sold" << endl;
-    cout << "_____________________" << endl;
-    for (int i = 0; i < NUM_SALSA_TYPES; i++) {
-        cout << salsaNames[i] << ": " << jarsSold[i] << endl;
-    }
-
-    cout << "Total Sales: " << totalSales << endl;
-    cout << "High Seller: " << highSeller << endl;
-    cout << "Low Seller: " << lowSeller << endl;
-
-    
+    displayCharges(patient, surgery, pharmacy);
 
     return 0;
 }
